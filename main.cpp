@@ -7,12 +7,12 @@
 const unsigned int WIDTH = 1080;
 const unsigned int HEIGHT = 640;
 const float PARTICLE_RADIUS = 10.0f;
-const float GRAVITY = 9.81f;
+const float GRAVITY = 10.0f;
 const float TIME_STEP = 0.1f;
 
-const int ROW = 20;
-const int COL = 20;
-const float REST_DISTANCE = 20.0f;
+const int ROW = 10;
+const int COL = 10;
+const float REST_DISTANCE = 30.0f;
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Cloth Simulation");
@@ -34,7 +34,7 @@ int main() {
     for (int row = 0; row < ROW; ++row) {
         for (int col = 0; col < COL; ++col) {
             if (col < COL - 1) {
-                constraints.emplace_back(&particles[row * COL + col], &particles[row * COL + col + 1]);
+                constraints.emplace_back(&particles[row * COL + col], &particles[row * COL + (col + 1)]);
             }
             if (row < ROW - 1) {
                 constraints.emplace_back(&particles[row * COL + col], &particles[(row + 1) * COL + col]);
@@ -42,6 +42,24 @@ int main() {
             
         }
     }
+    
+    auto isValid = [](const sf::Vector2f& pos) {
+        return std::isfinite(pos.x) && std::isfinite(pos.y) &&
+               pos.x >= 0 && pos.x <= WIDTH * 2 &&
+               pos.y >= 0 && pos.y <= HEIGHT * 2;
+    };
+    
+    for (const auto& constraint : constraints) {
+        if (!constraint.active ||
+            !isValid(constraint.P1->position) || !isValid(constraint.P2->position)) continue;
+    
+        sf::Vertex line[] = {
+            sf::Vertex(constraint.P1->position, sf::Color::Green),
+            sf::Vertex(constraint.P2->position, sf::Color::Green),
+        };
+        window.draw(line, 2, sf::Lines);
+    }
+    
 
     while (window.isOpen()) {
         sf::Event event;
@@ -80,8 +98,8 @@ int main() {
         for (const auto& constraint : constraints) {
             if (!constraint.active) continue;
             sf::Vertex line[] = {
-                sf::Vertex(constraint.P1->position, sf::Color::White),
-                sf::Vertex(constraint.P2->position, sf::Color::White),
+                sf::Vertex(constraint.P1->position, sf::Color::Green),
+                sf::Vertex(constraint.P2->position, sf::Color::Green),
             };
             window.draw(line, 2, sf::Lines);
         }
