@@ -11,7 +11,7 @@ int main() {
     window.setFramerateLimit(60);
 
     std::vector<Particle> particles;
-    std::vector<constraint> constraints;
+    std::vector<Constraint> constraints;
 
     window.display();
 }
