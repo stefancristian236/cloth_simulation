@@ -23,15 +23,13 @@ class Constraint {
             sf::Vector2f delta = P2->position - P1->position;
             double length = std::hypot(delta.x, delta.y);
 
-            // Prevent division by zero
             if (length == 0.0) return;
 
             double diff = (length - initial_length) / length;
             sf::Vector2f correct = delta * 0.5f * static_cast<float>(diff);
 
-            // Apply correction only if the particles are not pinned
             if (!P1->pin) P1->position += correct;
-            if (!P2->pin) P2->position -= correct;  // Apply the opposite correction to P2
+            if (!P2->pin) P2->position -= correct;  
         }
 
         void deactivate() {
