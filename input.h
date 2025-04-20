@@ -50,6 +50,7 @@ class input {
                     near_const = const_cast<Constraint*>(&constraint);
                 }
             }
+            return nullptr;
         }
 
         static void tear_cloth (double mouse_x, double mouse_y, const std::vector<Particle>& particles, std::vector<Constraint>& constraints){
